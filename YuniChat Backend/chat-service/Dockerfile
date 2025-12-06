@@ -11,8 +11,11 @@ COPY ["YuniChat Backend/common", "./common"]
 # Copy chat service
 COPY ["YuniChat Backend/chat-service", "./chat-service"]
 
-# Build the entire project
-RUN mvn clean install -DskipTests -pl chat-service -am
+# Build common module first
+RUN mvn clean install -DskipTests -f common/pom.xml
+
+# Build chat service (standalone, no reactor)
+RUN mvn clean package -DskipTests -f chat-service/pom.xml
 
 # Stage 2: Runtime image
 FROM eclipse-temurin:17-jre-alpine

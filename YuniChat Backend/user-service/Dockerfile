@@ -11,8 +11,11 @@ COPY ["YuniChat Backend/common", "./common"]
 # Copy user service
 COPY ["YuniChat Backend/user-service", "./user-service"]
 
-# Build the entire project
-RUN mvn clean install -DskipTests -pl user-service -am
+# Build common module first
+RUN mvn clean install -DskipTests -f common/pom.xml
+
+# Build user service (standalone, no reactor)
+RUN mvn clean package -DskipTests -f user-service/pom.xml
 
 # Stage 2: Runtime image
 FROM eclipse-temurin:17-jre-alpine

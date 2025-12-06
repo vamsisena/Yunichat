@@ -11,8 +11,11 @@ COPY ["YuniChat Backend/common", "./common"]
 # Copy file service
 COPY ["YuniChat Backend/file-service", "./file-service"]
 
-# Build the entire project
-RUN mvn clean install -DskipTests -pl file-service -am
+# Build common module first
+RUN mvn clean install -DskipTests -f common/pom.xml
+
+# Build file service (standalone, no reactor)
+RUN mvn clean package -DskipTests -f file-service/pom.xml
 
 # Stage 2: Runtime image
 FROM eclipse-temurin:17-jre-alpine
