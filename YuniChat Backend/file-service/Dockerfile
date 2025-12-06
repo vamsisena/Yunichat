@@ -5,11 +5,11 @@ FROM maven:3.9-eclipse-temurin-17-alpine AS builder
 WORKDIR /build
 
 # Copy parent pom and common module first (for better caching)
-COPY YuniChat\ Backend/pom.xml ./
-COPY YuniChat\ Backend/common ./common
+COPY ["YuniChat Backend/pom.xml", "./"]
+COPY ["YuniChat Backend/common", "./common"]
 
 # Copy file service
-COPY YuniChat\ Backend/file-service ./file-service
+COPY ["YuniChat Backend/file-service", "./file-service"]
 
 # Build the entire project
 RUN mvn clean install -DskipTests -pl file-service -am

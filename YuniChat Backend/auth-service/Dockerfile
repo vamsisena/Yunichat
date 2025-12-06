@@ -5,11 +5,11 @@ FROM maven:3.9-eclipse-temurin-17-alpine AS builder
 WORKDIR /build
 
 # Copy parent pom and common module first (for better caching)
-COPY YuniChat\ Backend/pom.xml ./
-COPY YuniChat\ Backend/common ./common
+COPY ["YuniChat Backend/pom.xml", "./"]
+COPY ["YuniChat Backend/common", "./common"]
 
 # Copy auth service
-COPY YuniChat\ Backend/auth-service ./auth-service
+COPY ["YuniChat Backend/auth-service", "./auth-service"]
 
 # Build the entire project
 RUN mvn clean install -DskipTests -pl auth-service -am
