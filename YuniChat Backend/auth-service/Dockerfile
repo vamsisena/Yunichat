@@ -11,10 +11,13 @@ COPY ["YuniChat Backend/common", "./common"]
 # Copy auth service
 COPY ["YuniChat Backend/auth-service", "./auth-service"]
 
-# Build common module first
+# Install parent POM first (required for dependency resolution)
+RUN mvn install:install-file -Dfile=pom.xml -DpomFile=pom.xml -DgroupId=com.yunichat -DartifactId=yunichat-backend -Dversion=1.0.0 -Dpackaging=pom
+
+# Build common module
 RUN mvn clean install -DskipTests -f common/pom.xml
 
-# Build auth service (standalone, no reactor)
+# Build auth service
 RUN mvn clean package -DskipTests -f auth-service/pom.xml
 
 # Stage 2: Runtime image
