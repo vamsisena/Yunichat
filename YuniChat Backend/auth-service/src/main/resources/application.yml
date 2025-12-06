@@ -1,0 +1,78 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/yunichat}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+    timeout: 60000
+  
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        from: ${MAIL_FROM:noreply@yunichat.com}
+
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-must-be-at-least-256-bits-change-this-in-production}
+  access:
+    expiration: ${JWT_ACCESS_TOKEN_EXPIRY:3600000}
+  refresh:
+    expiration: ${JWT_REFRESH_TOKEN_EXPIRY:86400000}
+
+guest:
+  session:
+    expiry-minutes: ${GUEST_SESSION_EXPIRY_MINUTES:30}
+
+otp:
+  expiry-minutes: 5
+  length: 6
+
+logging:
+  level:
+    com.yunichat: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html

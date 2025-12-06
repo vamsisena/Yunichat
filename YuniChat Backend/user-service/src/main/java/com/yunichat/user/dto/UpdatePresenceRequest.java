@@ -1,0 +1,17 @@
+package com.yunichat.user.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdatePresenceRequest {
+    
+    @NotBlank(message = "Status is required")
+    @Pattern(regexp = "online|offline|away|busy", message = "Status must be online, offline, away, or busy")
+    private String status;
+}

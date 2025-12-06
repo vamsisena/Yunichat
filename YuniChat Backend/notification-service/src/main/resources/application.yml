@@ -1,0 +1,46 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: notification-service
+  
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:yunichat}
+    username: ${DB_USER:yunichat}
+    password: ${DB_PASSWORD:yunichat123}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+    timeout: 60000
+
+jwt:
+  secret: ${JWT_SECRET:yunichat-secret-key-change-in-production-please-make-it-secure}
+  expiration: 86400000
+
+notification:
+  max-unread-per-user: 1000
+  retention-days: 30
+  websocket:
+    allowed-origins: "*"
+    endpoint: /ws
+    broker:
+      prefix: /topic
+      application-prefix: /app
+
+logging:
+  level:
+    com.yunichat: DEBUG
+    org.springframework.web: INFO
+    org.springframework.messaging: DEBUG

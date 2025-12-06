@@ -1,0 +1,29 @@
+﻿# Node modules
+**/node_modules/
+**/package-lock.json
+
+# Build directories
+**/build/
+**/dist/
+**/target/
+
+# IDE
+**/.vscode/
+**/.idea/
+**/*.iml
+
+# OS
+**/.DS_Store
+**/Thumbs.db
+
+# Logs
+**/*.log
+**/logs/
+
+# Environment
+**/.env
+**/.env.local
+
+# Temporary files
+**/*.tmp
+**/*.temp
