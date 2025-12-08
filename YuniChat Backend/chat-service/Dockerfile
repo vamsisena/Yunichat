@@ -11,8 +11,9 @@ COPY ["YuniChat Backend/common", "./common"]
 # Copy chat service
 COPY ["YuniChat Backend/chat-service", "./chat-service"]
 
-# Install parent POM first (skip validation of missing child modules)
-RUN mvn install:install-file -Dfile=pom.xml -DgroupId=com.yunichat -DartifactId=yunichat-backend -Dversion=1.0.0 -Dpackaging=pom -DgeneratePom=true
+# Remove modules section from parent POM to avoid validation errors, then install it
+RUN sed -i '/<modules>/,/<\/modules>/d' pom.xml && \
+    mvn install:install-file -Dfile=pom.xml -DgroupId=com.yunichat -DartifactId=yunichat-backend -Dversion=1.0.0 -Dpackaging=pom
 
 # Build common module
 RUN mvn clean install -DskipTests -f common/pom.xml
