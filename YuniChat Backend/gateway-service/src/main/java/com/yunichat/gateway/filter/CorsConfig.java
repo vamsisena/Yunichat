@@ -19,7 +19,12 @@ public class CorsConfig {
     @Bean
     public org.springframework.web.cors.reactive.CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:3001"));
+        corsConfig.setAllowedOrigins(Arrays.asList(
+            "http://localhost:3000", 
+            "http://localhost:3001",
+            "https://yunichat.vercel.app",
+            "https://yunichat-ttu3gyo3b-vamsis-projects-1d80189d.vercel.app"
+        ));
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         corsConfig.setAllowedHeaders(Collections.singletonList("*"));
         corsConfig.setExposedHeaders(Collections.singletonList("*"));
@@ -29,6 +34,7 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         // Apply CORS to API routes only, NOT to WebSocket routes
         source.registerCorsConfiguration("/api/**", corsConfig);
+        source.registerCorsConfiguration("/auth/**", corsConfig);
 
         return new org.springframework.web.cors.reactive.CorsWebFilter(source);
     }
