@@ -5,11 +5,11 @@ FROM maven:3.9-eclipse-temurin-17-alpine AS builder
 WORKDIR /build
 
 # Copy parent pom and common module first (for better caching)
-COPY ../pom.xml ./
-COPY ../common ./common
+COPY ["YuniChat Backend/pom.xml", "./"]
+COPY ["YuniChat Backend/common", "./common"]
 
 # Copy notification service
-COPY . ./notification-service
+COPY ["YuniChat Backend/notification-service", "./notification-service"]
 
 # Remove modules section from parent POM to avoid validation errors, then install it
 RUN sed -i '/<modules>/,/<\/modules>/d' pom.xml && \
