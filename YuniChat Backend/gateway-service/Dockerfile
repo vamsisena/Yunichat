@@ -33,4 +33,5 @@ COPY --from=builder /build/gateway-service/target/gateway-service-1.0.0.jar app.
 EXPOSE 8080
 
 # Use PORT environment variable from Render (defaults to 8080 locally)
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
+# Use exec form to ensure proper signal handling
+CMD ["sh", "-c", "exec java -jar app.jar"]
