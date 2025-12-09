@@ -7,7 +7,20 @@ spring:
   cloud:
     gateway:
       globalcors:
-        add-to-simple-url-handler-mapping: false
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowed-origins:
+              - "${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://yunichat.vercel.app}"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
       routes:
         # Auth Service Routes
         - id: auth-service
