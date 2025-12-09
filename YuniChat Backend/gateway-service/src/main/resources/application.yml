@@ -66,6 +66,10 @@ spring:
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
 
 jwt:
   secret: ${JWT_SECRET:your-secret-key-must-be-at-least-256-bits-change-this-in-production}
@@ -90,6 +94,8 @@ management:
       enabled: true
     readinessstate:
       enabled: true
+    redis:
+      enabled: false
   metrics:
     export:
       prometheus:
