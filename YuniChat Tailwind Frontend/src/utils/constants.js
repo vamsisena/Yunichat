@@ -1,9 +1,10 @@
 // API Base URL - Direct connection to backend Gateway like MUI version
-export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
 // WebSocket URLs - Direct connection to backend Gateway (SockJS uses HTTP/HTTPS, not WS)
-export const WS_URL = 'http://localhost:8080/ws/chat';
-export const NOTIFICATION_WS_URL = 'http://localhost:8080/ws/notifications';
+const WS_BASE = process.env.REACT_APP_WS_URL || 'http://localhost:8080';
+export const WS_URL = `${WS_BASE}/ws/chat`;
+export const NOTIFICATION_WS_URL = `${WS_BASE}/ws/notifications`;
 
 // Auth
 export const TOKEN_KEY = 'yunichat_token';
