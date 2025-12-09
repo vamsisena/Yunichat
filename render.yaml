@@ -1,0 +1,40 @@
+services:
+  # Gateway Service
+  - type: web
+    name: yunichat-gateway
+    env: docker
+    dockerfilePath: ./YuniChat Backend/gateway-service/Dockerfile
+    dockerContext: ./
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: REDIS_HOST
+        fromService:
+          name: yunichat-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: yunichat-redis
+          type: redis
+          property: port
+      - key: JWT_SECRET
+        generateValue: true
+        sync: false
+      - key: AUTH_SERVICE_URL
+        value: http://yunichat-auth:8081
+      - key: USER_SERVICE_URL
+        value: http://yunichat-user:8082
+      - key: CHAT_SERVICE_URL
+        value: http://yunichat-chat:8083
+      - key: FILE_SERVICE_URL
+        value: http://yunichat-file:8084
+      - key: NOTIFICATION_SERVICE_URL
+        value: http://yunichat-notification:8085
+
+  # Redis for Gateway
+  - type: redis
+    name: yunichat-redis
+    plan: free
+    maxmemoryPolicy: noeviction
