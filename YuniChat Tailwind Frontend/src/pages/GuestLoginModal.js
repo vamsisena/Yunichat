@@ -21,7 +21,9 @@ const GuestLoginModal = ({ open, onClose }) => {
 
   // Navigate to chat after successful authentication
   useEffect(() => {
+    console.log('🔐 [GuestLoginModal] Auth state:', { isAuthenticated, isGuest, shouldNavigate });
     if (isAuthenticated && isGuest && shouldNavigate) {
+      console.log('✅ [GuestLoginModal] Navigating to /chat');
       handleClose();
       navigate('/chat');
       setShouldNavigate(false);

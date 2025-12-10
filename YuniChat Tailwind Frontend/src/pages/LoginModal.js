@@ -21,7 +21,9 @@ const LoginModal = ({ open, onClose, onSwitchToRegister }) => {
 
   // Navigate to chat after successful authentication
   useEffect(() => {
+    console.log('🔐 [LoginModal] Auth state:', { isAuthenticated, shouldNavigate });
     if (isAuthenticated && shouldNavigate) {
+      console.log('✅ [LoginModal] Navigating to /chat');
       handleClose();
       navigate('/chat');
       setShouldNavigate(false);
