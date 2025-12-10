@@ -26,7 +26,7 @@ public class RegisterRequest {
     private String password;
 
     @NotBlank(message = "Gender is required")
-    @Pattern(regexp = "^(male|female|others)$", message = "Gender must be male, female, or others")
+    @Pattern(regexp = "(?i)^(male|female|others?)$", message = "Gender must be male, female, or others")
     private String gender;
 
     @NotNull(message = "Age is required")
