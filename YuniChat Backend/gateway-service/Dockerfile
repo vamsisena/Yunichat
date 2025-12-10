@@ -29,9 +29,6 @@ WORKDIR /app
 # Copy the built JAR from builder stage
 COPY --from=builder /build/gateway-service/target/gateway-service-1.0.0.jar app.jar
 
-# Render provides PORT environment variable dynamically
-EXPOSE 8080
+EXPOSE 10000
 
-# Use PORT environment variable from Render (defaults to 8080 locally)
-# Use exec form to ensure proper signal handling
-CMD ["sh", "-c", "exec java -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-10000} -jar app.jar"]
