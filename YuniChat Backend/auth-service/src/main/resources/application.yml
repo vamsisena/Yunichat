@@ -1,9 +1,15 @@
 server:
-  port: 8081
+  port: ${PORT:8081}
 
 spring:
   application:
     name: auth-service
+  
+  # Disable auto-configuration for Redis and Kafka when not available
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
   
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/yunichat}
@@ -24,10 +30,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   
-  redis:
-    host: ${SPRING_REDIS_HOST:localhost}
-    port: ${SPRING_REDIS_PORT:6379}
-    timeout: 60000
+  # Redis configuration - optional for now
+  # Uncomment when Redis is available
+  # redis:
+  #   host: ${SPRING_REDIS_HOST:localhost}
+  #   port: ${SPRING_REDIS_PORT:6379}
+  #   timeout: 60000
   
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
