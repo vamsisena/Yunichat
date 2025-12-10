@@ -51,7 +51,8 @@ export default function authReducer(state = initialState, action) {
 
     case GUEST_LOGIN_SUCCESS:
       // Clear any cached data on fresh login
-      console.log('🔄 authReducer: Clearing cached data on login');
+      console.log('🔄 authReducer: GUEST_LOGIN_SUCCESS', action.payload);
+      console.log('🔄 authReducer: Setting isAuthenticated=true, isGuest=true');
       return {
         ...state,
         loading: false,
