@@ -38,14 +38,34 @@ axiosClient.interceptors.request.use(
   }
 );
 
-// Response interceptor - handle errors
+// Response interceptor - handle errors with retry logic
 axiosClient.interceptors.response.use(
   (response) => {
     console.log('📥 [axiosClient] Response:', response.status, response.config.url);
     return response;
   },
-  (error) => {
+  async (error) => {
     console.error('❌ [axiosClient] Error:', error);
+    
+    // Retry logic for 502/503/504 (service waking up on Render free tier)
+    const config = error.config;
+    if (!config || !config.retry) {
+      config.retry = 0;
+    }
+    
+    const shouldRetry = error.response?.status >= 502 && error.response?.status <= 504;
+    const maxRetries = 2;
+    
+    if (shouldRetry && config.retry < maxRetries) {
+      config.retry += 1;
+      console.log(`🔄 [axiosClient] Retrying request (${config.retry}/${maxRetries}) after ${error.response.status} error`);
+      
+      // Wait 2 seconds before retrying (give service time to wake up)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      return axiosClient(config);
+    }
+    
     if (error.response) {
       // Handle 401 Unauthorized - but NOT for login/register endpoints
       if (error.response.status === 401) {
