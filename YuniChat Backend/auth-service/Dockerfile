@@ -31,4 +31,5 @@ COPY --from=builder /build/auth-service/target/auth-service-1.0.0.jar app.jar
 
 EXPOSE 10000
 
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-10000} -jar app.jar"]
+# Optimized JVM settings for Render free tier (512MB RAM)
+ENTRYPOINT ["sh", "-c", "java -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -Djava.security.egd=file:/dev/./urandom -Dserver.port=${PORT:-10000} -jar app.jar"]
