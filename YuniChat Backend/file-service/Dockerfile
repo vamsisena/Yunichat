@@ -32,6 +32,6 @@ COPY --from=builder /build/file-service/target/file-service-1.0.0.jar app.jar
 # Create uploads directory
 RUN mkdir -p /app/uploads
 
-EXPOSE 8084
+EXPOSE 10000
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-10000} -jar app.jar"]

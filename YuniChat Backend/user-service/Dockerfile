@@ -29,6 +29,6 @@ WORKDIR /app
 # Copy the built JAR from builder stage
 COPY --from=builder /build/user-service/target/user-service-1.0.0.jar app.jar
 
-EXPOSE 8082
+EXPOSE 10000
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-10000} -jar app.jar"]
