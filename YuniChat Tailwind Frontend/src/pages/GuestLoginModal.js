@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { guestLogin } from '../features/actions/authActions';
+import useAuth from '../hooks/useAuth';
 
 const GuestLoginModal = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isAuthenticated, isGuest } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     age: '',
@@ -15,6 +17,16 @@ const GuestLoginModal = ({ open, onClose }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [shouldNavigate, setShouldNavigate] = useState(false);
+
+  // Navigate to chat after successful authentication
+  useEffect(() => {
+    if (isAuthenticated && isGuest && shouldNavigate) {
+      handleClose();
+      navigate('/chat');
+      setShouldNavigate(false);
+    }
+  }, [isAuthenticated, isGuest, shouldNavigate, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,8 +74,8 @@ const GuestLoginModal = ({ open, onClose }) => {
       }));
       
       if (result.success) {
-        handleClose();
-        navigate('/chat');
+        // Set flag to trigger navigation in useEffect after Redux state updates
+        setShouldNavigate(true);
       } else {
         setErrorMessage(result.message || 'Guest login failed. Please try again.');
       }

@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../features/actions/authActions';
 import { validatePassword } from '../utils/validators';
+import useAuth from '../hooks/useAuth';
 
 const LoginModal = ({ open, onClose, onSwitchToRegister }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     usernameOrEmail: '',
     password: '',
@@ -15,6 +17,16 @@ const LoginModal = ({ open, onClose, onSwitchToRegister }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [shouldNavigate, setShouldNavigate] = useState(false);
+
+  // Navigate to chat after successful authentication
+  useEffect(() => {
+    if (isAuthenticated && shouldNavigate) {
+      handleClose();
+      navigate('/chat');
+      setShouldNavigate(false);
+    }
+  }, [isAuthenticated, shouldNavigate, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,9 +72,9 @@ const LoginModal = ({ open, onClose, onSwitchToRegister }) => {
       setLoading(false);
     
       if (result.success) {
-        console.log('✅ Login successful, navigating to chat');
-        handleClose();
-        navigate('/chat');
+        console.log('✅ Login successful, waiting for Redux state update');
+        // Set flag to trigger navigation in useEffect after Redux state updates
+        setShouldNavigate(true);
       } else {
         console.log('❌ Login failed:', result.message);
         const backendMessage = result.message || '';
