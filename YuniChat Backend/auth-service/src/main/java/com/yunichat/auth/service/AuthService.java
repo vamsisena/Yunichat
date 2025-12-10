@@ -8,8 +8,8 @@ import com.yunichat.auth.repository.UserRepository;
 import com.yunichat.common.exception.BadRequestException;
 import com.yunichat.common.exception.UnauthorizedException;
 import com.yunichat.common.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("null")
 public class AuthService {
@@ -30,7 +29,21 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final OtpService otpService;
-    private final RedisTemplate<String, String> redisTemplate;
+    
+    @Autowired(required = false)
+    private RedisTemplate<String, String> redisTemplate;
+    
+    public AuthService(UserRepository userRepository, 
+                      GuestSessionRepository guestSessionRepository,
+                      PasswordEncoder passwordEncoder,
+                      JwtUtil jwtUtil,
+                      OtpService otpService) {
+        this.userRepository = userRepository;
+        this.guestSessionRepository = guestSessionRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
+        this.otpService = otpService;
+    }
 
     @Value("${guest.session.expiry-minutes:30}")
     private int guestSessionExpiryMinutes;
@@ -325,28 +338,37 @@ public class AuthService {
     }
 
     private void storeRefreshToken(Long userId, String token) {
-        redisTemplate.opsForValue().set(
-                "refresh_token:" + userId, 
-                token, 
-                24, 
-                TimeUnit.HOURS
-        );
+        if (redisTemplate != null) {
+            redisTemplate.opsForValue().set(
+                    "refresh_token:" + userId, 
+                    token, 
+                    24, 
+                    TimeUnit.HOURS
+            );
+        }
     }
 
     private void storeRefreshToken(Long userId, String token, int expiryMinutes) {
-        redisTemplate.opsForValue().set(
-                "refresh_token:" + userId, 
-                token, 
-                expiryMinutes, 
-                TimeUnit.MINUTES
-        );
+        if (redisTemplate != null) {
+            redisTemplate.opsForValue().set(
+                    "refresh_token:" + userId, 
+                    token, 
+                    expiryMinutes, 
+                    TimeUnit.MINUTES
+            );
+        }
     }
 
     private String getRefreshToken(Long userId) {
-        return redisTemplate.opsForValue().get("refresh_token:" + userId);
+        if (redisTemplate != null) {
+            return redisTemplate.opsForValue().get("refresh_token:" + userId);
+        }
+        return null;
     }
 
     private void removeRefreshToken(Long userId) {
-        redisTemplate.delete("refresh_token:" + userId);
+        if (redisTemplate != null) {
+            redisTemplate.delete("refresh_token:" + userId);
+        }
     }
 }

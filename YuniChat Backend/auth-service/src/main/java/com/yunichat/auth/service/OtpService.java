@@ -1,7 +1,7 @@
 package com.yunichat.auth.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,14 +12,20 @@ import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @SuppressWarnings("null")
 public class OtpService {
 
     private final JavaMailSender mailSender;
-    private final RedisTemplate<String, String> redisTemplate;
+    
+    @Autowired(required = false)
+    private RedisTemplate<String, String> redisTemplate;
+    
     private final SecureRandom secureRandom = new SecureRandom();
+    
+    public OtpService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     @Value("${otp.expiry-minutes:5}")
     private int otpExpiryMinutes;
@@ -34,13 +40,17 @@ public class OtpService {
         // Generate OTP
         String otp = generateOtp();
 
-        // Store OTP in Redis with expiry
-        redisTemplate.opsForValue().set(
-                "otp:" + email,
-                otp,
-                otpExpiryMinutes,
-                TimeUnit.MINUTES
-        );
+        // Store OTP in Redis with expiry (if Redis is available)
+        if (redisTemplate != null) {
+            redisTemplate.opsForValue().set(
+                    "otp:" + email,
+                    otp,
+                    otpExpiryMinutes,
+                    TimeUnit.MINUTES
+            );
+        } else {
+            log.warn("Redis not available, OTP storage skipped. OTP: {}", otp);
+        }
 
         // Send email
         sendOtpEmail(email, otp);
@@ -49,6 +59,11 @@ public class OtpService {
     }
 
     public boolean verifyOtp(String email, String otp) {
+        if (redisTemplate == null) {
+            log.warn("Redis not available, OTP verification skipped");
+            return false;
+        }
+        
         String storedOtp = redisTemplate.opsForValue().get("otp:" + email);
 
         if (storedOtp == null) {
@@ -68,6 +83,11 @@ public class OtpService {
     }
 
     public boolean verifyOtpWithoutDelete(String email, String otp) {
+        if (redisTemplate == null) {
+            log.warn("Redis not available, OTP verification skipped");
+            return false;
+        }
+        
         String storedOtp = redisTemplate.opsForValue().get("otp:" + email);
 
         if (storedOtp == null) {
